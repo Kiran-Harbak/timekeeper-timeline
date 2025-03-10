@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +14,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 210 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -32,22 +33,15 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.5rem;
+    --radius: 0.8rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
@@ -96,6 +90,56 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss03", "cv01", "cv02", "cv03";
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/30;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/70 dark:bg-gray-900/70 backdrop-blur-lg border border-white/20 dark:border-gray-800/20 rounded-lg shadow-sm;
+  }
+  
+  .time-entry {
+    @apply animate-fade-in transition-all duration-300 ease-out;
+    transition-property: transform, opacity, box-shadow;
+  }
+  
+  .time-entry:hover {
+    @apply shadow-md transform -translate-y-0.5;
+  }
+  
+  .month-transition-enter {
+    @apply opacity-0 transform translate-y-4;
+  }
+  
+  .month-transition-enter-active {
+    @apply opacity-100 transform translate-y-0 transition-all duration-300 ease-out;
+  }
+  
+  .month-transition-exit {
+    @apply opacity-100 transform translate-y-0;
+  }
+  
+  .month-transition-exit-active {
+    @apply opacity-0 transform -translate-y-4 transition-all duration-300 ease-out;
   }
 }
