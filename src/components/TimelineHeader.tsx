@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
 import { 
   ChevronLeft, 
@@ -7,7 +6,7 @@ import {
   Filter,
   ArrowDownWideNarrow,
   MoreHorizontal,
-  Export
+  Download
 } from 'lucide-react';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
@@ -81,8 +80,8 @@ const TimelineHeader: React.FC = () => {
               Days ▼
             </Button>
             
-            <Button variant="primary" className="h-8 text-xs bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1">
-              <Export className="h-3.5 w-3.5" />
+            <Button variant="default" className="h-8 text-xs bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1">
+              <Download className="h-3.5 w-3.5" />
               Export ▼
             </Button>
           </div>
