@@ -1,4 +1,3 @@
-
 import { format, addDays, startOfMonth, endOfMonth, eachDayOfInterval, addHours, intervalToDuration, differenceInMinutes, formatDuration, parseISO } from 'date-fns';
 
 export interface TimeEntry {
@@ -158,3 +157,159 @@ export const getCategories = (): string[] => {
     'Other'
   ];
 };
+
+export interface TimesheetTask {
+  key: string;
+  description: string;
+  hours?: number;
+  requiredHours?: string;
+  dailyHours?: Record<string, number>;
+  utilization?: string;
+}
+
+export interface TimesheetUser {
+  name: string;
+  utilization: number;
+  requiredHours: number;
+  loggedHours: number;
+  tasks: TimesheetTask[];
+  dailyHours?: Record<string, number>;
+}
+
+export const getInitialTimesheetData = (): TimesheetUser[] => {
+  return [
+    {
+      name: "Catherine Evans",
+      utilization: 113,
+      requiredHours: 176,
+      loggedHours: 198.75,
+      dailyHours: { "04": 14, "05": 12, "06": 11, "07": 11, "08": 10, "11": 13, "12": 13, "13": 13, "14": 13, "19": 9, "20": 9 },
+      tasks: [
+        {
+          key: "SUST-2",
+          description: "Consult with Lunar Industries to develop plan",
+          requiredHours: "5h 15m",
+          dailyHours: { "04": 3, "05": 1, "06": 15/60, "07": 1 }
+        },
+        {
+          key: "SUST-32",
+          description: "Determine contamination levels using liquid chromatography",
+          requiredHours: "29h",
+          dailyHours: { "05": 1, "06": 1, "07": 1, "12": 4, "13": 4, "14": 4, "15": 4, "16": 4 }
+        },
+        {
+          key: "SUST-16",
+          description: "Determine pollution output from food emulsifiers",
+          requiredHours: "24h 15m",
+          dailyHours: { "06": 15/60, "12": 3, "13": 3, "14": 3, "15": 3, "16": 3, "19": 3, "20": 3 }
+        },
+        {
+          key: "SUST-10",
+          description: "Determine thermal and radiation emissions from processing",
+          requiredHours: "20h 15m",
+          dailyHours: { "04": 4, "05": 4, "06": 4.25, "07": 4, "08": 4 }
+        },
+        {
+          key: "SUST-30",
+          description: "Training on lunar environmental assessments",
+          requiredHours: "120h",
+          dailyHours: { "04": 6, "05": 6, "06": 6, "07": 6, "08": 6, "12": 6, "13": 6, "14": 6, "15": 6, "16": 6, "19": 6, "20": 6 }
+        }
+      ]
+    },
+    {
+      name: "David Carmichael",
+      utilization: 100,
+      requiredHours: 168,
+      loggedHours: 168,
+      dailyHours: { "04": 8, "05": 8, "06": 8, "07": 8, "08": 8, "12": 8, "13": 8, "14": 8, "15": 8, "19": 8, "20": 8 },
+      tasks: [
+        {
+          key: "SUST-27",
+          description: "Assess toxicology risk of green cheese sedimentation",
+          requiredHours: "168h",
+          dailyHours: { "04": 8, "05": 8, "06": 8, "07": 8, "08": 8, "12": 8, "13": 8, "14": 8, "15": 8, "19": 8, "20": 8 }
+        }
+      ]
+    },
+    {
+      name: "Eric",
+      utilization: 73,
+      requiredHours: 176,
+      loggedHours: 129,
+      dailyHours: { "04": 7, "05": 7, "06": 7, "07": 7, "08": 7, "12": 7, "13": 7, "14": 7, "15": 7, "16": 7, "19": 6, "20": 6 },
+      tasks: [
+        {
+          key: "SUST-29",
+          description: "Administrative",
+          requiredHours: "10h",
+          dailyHours: { "04": 1, "05": 1, "06": 1, "07": 1, "08": 1, "12": 1, "13": 1, "14": 1, "15": 1, "16": 1 }
+        },
+        {
+          key: "SUST-9",
+          description: "Test soil samples for excess helium-3 emissions",
+          requiredHours: "119h",
+          dailyHours: { "04": 6, "05": 6, "06": 6, "07": 6, "08": 6, "12": 6, "13": 6, "14": 6, "15": 6, "16": 6, "19": 6, "20": 6 }
+        }
+      ]
+    },
+    {
+      name: "Scott",
+      utilization: 117,
+      requiredHours: 168,
+      loggedHours: 197,
+      dailyHours: { "04": 14, "05": 14, "06": 14, "07": 14, "08": 14, "12": 10, "13": 14, "14": 14, "15": 14, "19": 8, "20": 8 },
+      tasks: [
+        {
+          key: "SUST-14",
+          description: "Do ultrasonic tests in waste disposal areas",
+          requiredHours: "61h",
+          dailyHours: { "04": 6, "05": 6, "06": 6, "07": 6, "08": 6, "12": 6, "13": 6, "14": 6, "15": 6, "16": 6 }
+        },
+        {
+          key: "SUST-19",
+          description: "Prescribe actions to take on green cheese toxicology",
+          requiredHours: "136h",
+          dailyHours: { "04": 8, "05": 8, "06": 8, "07": 8, "08": 8, "12": 4, "13": 8, "14": 8, "15": 8, "19": 8, "20": 8 }
+        }
+      ]
+    },
+    {
+      name: "Taylor",
+      utilization: 100,
+      requiredHours: 168,
+      loggedHours: 168,
+      dailyHours: { "04": 8, "05": 8, "06": 8, "07": 8, "08": 8, "12": 8, "13": 8, "14": 8, "15": 8, "19": 8, "20": 8 },
+      tasks: [
+        {
+          key: "SUST-3",
+          description: "Manage transportation equipment for facilities",
+          requiredHours: "168h",
+          dailyHours: { "04": 8, "05": 8, "06": 8, "07": 8, "08": 8, "12": 8, "13": 8, "14": 8, "15": 8, "19": 8, "20": 8 }
+        }
+      ]
+    },
+    {
+      name: "Vivian",
+      utilization: 90,
+      requiredHours: 168,
+      loggedHours: 152,
+      dailyHours: { "04": 5, "05": 5, "06": 5, "07": 5, "08": 5, "12": 7, "13": 7, "14": 7, "15": 10, "19": 10, "20": 10 },
+      tasks: [
+        {
+          key: "SUST-32",
+          description: "Determine contamination levels using liquid chromatography",
+          requiredHours: "138h",
+          dailyHours: { "04": 5, "05": 5, "06": 5, "07": 5, "08": 5, "12": 5, "13": 5, "14": 5, "15": 8, "19": 8, "20": 8 }
+        },
+        {
+          key: "SUST-31",
+          description: "Project meetings",
+          requiredHours: "14h",
+          dailyHours: { "12": 2, "13": 2, "14": 2, "15": 2, "19": 2, "20": 2 }
+        }
+      ]
+    }
+  ];
+};
+

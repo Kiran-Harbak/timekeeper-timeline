@@ -2,29 +2,34 @@
 import React from 'react';
 import { TimeEntryProvider } from '../context/TimeEntryContext';
 import TimelineHeader from '../components/TimelineHeader';
-import Timeline from '../components/Timeline';
-import Stats from '../components/Stats';
+import JiraTimesheet from '../components/JiraTimesheet';
 import { Toaster } from 'sonner';
 
 const Index = () => {
   return (
     <TimeEntryProvider>
-      <div className="min-h-screen bg-gradient-to-br from-background to-secondary/30 p-4 md:p-8">
-        <div className="max-w-7xl mx-auto">
-          <header className="mb-8 text-center">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">Timekeeper</h1>
-            <p className="text-muted-foreground">Track your time with elegance and precision</p>
+      <div className="min-h-screen bg-white p-4 md:p-8">
+        <div className="max-w-full mx-auto">
+          <header className="mb-6 flex justify-between items-center">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight mb-1">Timekeeper</h1>
+              <div className="text-sm text-muted-foreground flex items-center gap-2">
+                <span>Reports</span>
+                <span>›</span>
+                <span>Logged Time</span>
+              </div>
+              <h2 className="text-xl font-semibold mt-1">Sustainability Project Team - August 2024</h2>
+            </div>
+            <div className="flex items-center gap-3">
+              <button className="border px-4 py-1 rounded text-sm">Save</button>
+              <button className="border px-4 py-1 rounded text-sm">Share</button>
+            </div>
           </header>
           
           <TimelineHeader />
           
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="md:col-span-2">
-              <Timeline />
-            </div>
-            <div>
-              <Stats />
-            </div>
+          <div className="mt-6">
+            <JiraTimesheet />
           </div>
         </div>
       </div>
