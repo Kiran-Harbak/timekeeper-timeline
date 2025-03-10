@@ -4,6 +4,7 @@ import { TimeEntryProvider } from '../context/TimeEntryContext';
 import TimelineHeader from '../components/TimelineHeader';
 import Timeline from '../components/Timeline';
 import Stats from '../components/Stats';
+import { Toaster } from 'sonner';
 
 const Index = () => {
   return (
@@ -27,6 +28,7 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <Toaster />
     </TimeEntryProvider>
   );
 };

@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { TimeEntry, getInitialTimeEntries, generateTimeId } from '../utils/timeUtils';
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 interface TimeEntryContextType {
   entries: TimeEntry[];
