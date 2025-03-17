@@ -7,7 +7,7 @@ import { Clock, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Stats: React.FC = () => {
-  const { entries, selectedDate } = useTimeEntries();
+  const { entries, selectedDate, timelineView } = useTimeEntries();
   
   // Get today's entries
   const todayEntries = entries.filter(entry => 
@@ -56,15 +56,26 @@ const Stats: React.FC = () => {
   // Find max hours for scaling
   const maxDailyHours = Math.max(...dailyDistribution.map(d => d.hours), 8);
 
+  // Set the title based on the current view
+  const getViewTitle = () => {
+    if (timelineView === 'days') {
+      return 'Daily Summary';
+    } else if (timelineView === 'weeks') {
+      return 'Weekly Summary';
+    } else {
+      return 'Monthly Summary';
+    }
+  };
+
   return (
     <div className="glass-panel p-4 animate-slide-up">
-      <h2 className="text-xl font-semibold mb-4">Summary</h2>
+      <h2 className="text-xl font-semibold mb-4">{getViewTitle()}</h2>
       
       <div className="grid grid-cols-2 gap-4 mb-6">
         <div className="bg-secondary/50 rounded-lg p-4">
           <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <Clock className="h-4 w-4" />
-            <span className="text-sm">Today</span>
+            <span className="text-sm">{timelineView === 'days' ? 'Today' : 'Selected Day'}</span>
           </div>
           <div className="text-2xl font-bold">
             {todayHours} hrs

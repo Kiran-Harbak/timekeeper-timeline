@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
+import { format, addDays, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
 import { 
   ChevronLeft, 
   ChevronRight,
@@ -15,7 +15,7 @@ import {
   Mail,
   ChevronDown
 } from 'lucide-react';
-import { useTimeEntries } from '../context/TimeEntryContext';
+import { useTimeEntries, TimelineViewType } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -27,26 +27,58 @@ import {
 import { toast } from 'sonner';
 
 const TimelineHeader: React.FC = () => {
-  const { selectedDate, setSelectedDate } = useTimeEntries();
+  const { selectedDate, setSelectedDate, timelineView, setTimelineView } = useTimeEntries();
   
   const goToPreviousPeriod = () => {
-    setSelectedDate(addDays(selectedDate, -7));
+    if (timelineView === 'days') {
+      setSelectedDate(addDays(selectedDate, -7));
+    } else if (timelineView === 'weeks') {
+      setSelectedDate(addWeeks(selectedDate, -1));
+    } else {
+      // For months view
+      const newDate = new Date(selectedDate);
+      newDate.setMonth(newDate.getMonth() - 1);
+      setSelectedDate(newDate);
+    }
   };
   
   const goToNextPeriod = () => {
-    setSelectedDate(addDays(selectedDate, 7));
+    if (timelineView === 'days') {
+      setSelectedDate(addDays(selectedDate, 7));
+    } else if (timelineView === 'weeks') {
+      setSelectedDate(addWeeks(selectedDate, 1));
+    } else {
+      // For months view
+      const newDate = new Date(selectedDate);
+      newDate.setMonth(newDate.getMonth() + 1);
+      setSelectedDate(newDate);
+    }
   };
   
-  // Get the current week range
-  const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
-  const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
-  const periodDisplay = `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
+  // Get the current period range based on selected view
+  const getPeriodDisplay = () => {
+    if (timelineView === 'days') {
+      const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+      const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
+      return `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
+    }
+    else if (timelineView === 'weeks') {
+      const weekNumber = format(selectedDate, 'w');
+      const yearNumber = format(selectedDate, 'yyyy');
+      return `Week ${weekNumber}, ${yearNumber}`;
+    } 
+    else {
+      // For months view
+      return format(selectedDate, 'MMMM yyyy');
+    }
+  };
 
   const handleExport = (type: string) => {
     toast.success(`Exporting as ${type}`);
   };
 
-  const handleViewChange = (view: string) => {
+  const handleViewChange = (view: TimelineViewType) => {
+    setTimelineView(view);
     toast.success(`View changed to ${view}`);
   };
 
@@ -59,7 +91,7 @@ const TimelineHeader: React.FC = () => {
           </Button>
           
           <div className="flex items-center border rounded px-3 py-1.5">
-            <span className="text-sm">{periodDisplay}</span>
+            <span className="text-sm">{getPeriodDisplay()}</span>
           </div>
           
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={goToNextPeriod}>
@@ -102,19 +134,19 @@ const TimelineHeader: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-8 text-xs">
-                  Days <ChevronDown className="ml-1 h-3.5 w-3.5" />
+                  {timelineView.charAt(0).toUpperCase() + timelineView.slice(1)} <ChevronDown className="ml-1 h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white min-w-[150px]">
-                <DropdownMenuItem onClick={() => handleViewChange("Days")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("days")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Days</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("Weeks")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("weeks")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Weeks</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("Months")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("months")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Months</span>
                 </DropdownMenuItem>
