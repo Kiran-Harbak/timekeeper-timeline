@@ -10,9 +10,10 @@ import {
   Download,
   Calendar,
   FileSpreadsheet,
-  FileCsv,
-  FilePdf,
-  Mail
+  FileText,
+  File,
+  Mail,
+  ChevronDown
 } from 'lucide-react';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
@@ -134,11 +135,11 @@ const TimelineHeader: React.FC = () => {
                   <span>Excel</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("CSV")} className="text-sm">
-                  <FileCsv className="mr-2 h-3.5 w-3.5" />
+                  <File className="mr-2 h-3.5 w-3.5" />
                   <span>CSV</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("PDF")} className="text-sm">
-                  <FilePdf className="mr-2 h-3.5 w-3.5" />
+                  <FileText className="mr-2 h-3.5 w-3.5" />
                   <span>PDF</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("Email")} className="text-sm">
