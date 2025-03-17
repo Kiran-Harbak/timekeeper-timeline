@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { format, addDays, startOfWeek, isWeekend } from 'date-fns';
+import { format, addDays, startOfWeek, isWeekend, isToday } from 'date-fns';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { cn } from '@/lib/utils';
 import { getInitialTimesheetData } from '../utils/timeUtils';
@@ -37,18 +37,26 @@ const JiraTimesheet: React.FC = () => {
               
               {weekDays.slice(0, 17).map((day, index) => {
                 const isWeekendDay = isWeekend(day);
+                const isTodayDate = isToday(day);
                 return (
                   <th 
                     key={index} 
                     className={cn(
                       "text-center border-r py-1 px-1 min-w-14",
-                      isWeekendDay && "bg-gray-100"
+                      isWeekendDay && "bg-gray-100",
+                      isTodayDate && "bg-blue-50 border-t-2 border-t-blue-400"
                     )}
                   >
-                    <div className="text-xs font-medium">{format(day, 'dd')}</div>
+                    <div className={cn(
+                      "text-xs font-medium",
+                      isTodayDate && "text-blue-600"
+                    )}>
+                      {format(day, 'dd')}
+                    </div>
                     <div className={cn(
                       "text-[10px]",
-                      isWeekendDay ? "text-gray-400" : "text-gray-500"
+                      isWeekendDay ? "text-gray-400" : "text-gray-500",
+                      isTodayDate && "text-blue-500 font-medium"
                     )}>
                       {format(day, 'EEE').toUpperCase()}
                     </div>
@@ -77,12 +85,14 @@ const JiraTimesheet: React.FC = () => {
                   {weekDays.slice(0, 17).map((day, dayIndex) => {
                     const dailyHours = user.dailyHours?.[format(day, 'dd')] || '';
                     const isWeekendDay = isWeekend(day);
+                    const isTodayDate = isToday(day);
                     return (
                       <td 
                         key={dayIndex} 
                         className={cn(
                           "text-center border-r py-2 px-1 min-w-14",
-                          isWeekendDay && "bg-gray-100"
+                          isWeekendDay && "bg-gray-100",
+                          isTodayDate && "bg-blue-50"
                         )}
                       >
                         {dailyHours && `${dailyHours}h`}
@@ -108,12 +118,14 @@ const JiraTimesheet: React.FC = () => {
                     {weekDays.slice(0, 17).map((day, dayIndex) => {
                       const dailyHours = task.dailyHours?.[format(day, 'dd')] || '';
                       const isWeekendDay = isWeekend(day);
+                      const isTodayDate = isToday(day);
                       return (
                         <td 
                           key={dayIndex} 
                           className={cn(
                             "text-center border-r py-2 px-1 min-w-14 hover:bg-gray-50 cursor-pointer",
-                            isWeekendDay && "bg-gray-100"
+                            isWeekendDay && "bg-gray-100",
+                            isTodayDate && "bg-blue-50"
                           )}
                         >
                           {dailyHours && `${dailyHours}h`}
@@ -143,12 +155,14 @@ const JiraTimesheet: React.FC = () => {
                 }, 0);
                 
                 const isWeekendDay = isWeekend(day);
+                const isTodayDate = isToday(day);
                 return (
                   <td 
                     key={dayIndex} 
                     className={cn(
                       "text-center border-r py-2 px-1 min-w-14",
-                      isWeekendDay && "bg-gray-100"
+                      isWeekendDay && "bg-gray-100",
+                      isTodayDate && "bg-blue-50"
                     )}
                   >
                     {dailyTotal > 0 && `${dailyTotal}h`}
