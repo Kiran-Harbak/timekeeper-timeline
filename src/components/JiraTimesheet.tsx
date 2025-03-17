@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { format, addDays, startOfWeek } from 'date-fns';
+import { format, addDays, startOfWeek, isWeekend } from 'date-fns';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { cn } from '@/lib/utils';
 import { getInitialTimesheetData } from '../utils/timeUtils';
@@ -35,12 +35,26 @@ const JiraTimesheet: React.FC = () => {
               <th className="py-2 px-3 font-medium text-left border-r sticky left-[430px] z-20 bg-gray-50" style={{ minWidth: '100px' }}>Required</th>
               <th className="py-2 px-3 font-medium text-left border-r sticky left-[530px] z-20 bg-gray-50" style={{ minWidth: '80px' }}>Logged</th>
               
-              {weekDays.slice(0, 17).map((day, index) => (
-                <th key={index} className="text-center border-r py-1 px-1 min-w-14">
-                  <div className="text-xs font-medium">{format(day, 'dd')}</div>
-                  <div className="text-[10px] text-gray-500">{format(day, 'EEE').toUpperCase()}</div>
-                </th>
-              ))}
+              {weekDays.slice(0, 17).map((day, index) => {
+                const isWeekendDay = isWeekend(day);
+                return (
+                  <th 
+                    key={index} 
+                    className={cn(
+                      "text-center border-r py-1 px-1 min-w-14",
+                      isWeekendDay && "bg-gray-100"
+                    )}
+                  >
+                    <div className="text-xs font-medium">{format(day, 'dd')}</div>
+                    <div className={cn(
+                      "text-[10px]",
+                      isWeekendDay ? "text-gray-400" : "text-gray-500"
+                    )}>
+                      {format(day, 'EEE').toUpperCase()}
+                    </div>
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           
@@ -62,8 +76,15 @@ const JiraTimesheet: React.FC = () => {
                   
                   {weekDays.slice(0, 17).map((day, dayIndex) => {
                     const dailyHours = user.dailyHours?.[format(day, 'dd')] || '';
+                    const isWeekendDay = isWeekend(day);
                     return (
-                      <td key={dayIndex} className="text-center border-r py-2 px-1 min-w-14">
+                      <td 
+                        key={dayIndex} 
+                        className={cn(
+                          "text-center border-r py-2 px-1 min-w-14",
+                          isWeekendDay && "bg-gray-100"
+                        )}
+                      >
                         {dailyHours && `${dailyHours}h`}
                       </td>
                     );
@@ -86,8 +107,15 @@ const JiraTimesheet: React.FC = () => {
                     
                     {weekDays.slice(0, 17).map((day, dayIndex) => {
                       const dailyHours = task.dailyHours?.[format(day, 'dd')] || '';
+                      const isWeekendDay = isWeekend(day);
                       return (
-                        <td key={dayIndex} className="text-center border-r py-2 px-1 min-w-14 hover:bg-gray-50 cursor-pointer">
+                        <td 
+                          key={dayIndex} 
+                          className={cn(
+                            "text-center border-r py-2 px-1 min-w-14 hover:bg-gray-50 cursor-pointer",
+                            isWeekendDay && "bg-gray-100"
+                          )}
+                        >
                           {dailyHours && `${dailyHours}h`}
                         </td>
                       );
@@ -114,8 +142,15 @@ const JiraTimesheet: React.FC = () => {
                   return acc + userDailyTotal;
                 }, 0);
                 
+                const isWeekendDay = isWeekend(day);
                 return (
-                  <td key={dayIndex} className="text-center border-r py-2 px-1 min-w-14">
+                  <td 
+                    key={dayIndex} 
+                    className={cn(
+                      "text-center border-r py-2 px-1 min-w-14",
+                      isWeekendDay && "bg-gray-100"
+                    )}
+                  >
                     {dailyTotal > 0 && `${dailyTotal}h`}
                   </td>
                 );
