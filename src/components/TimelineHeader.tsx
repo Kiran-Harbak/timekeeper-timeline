@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { format, addDays, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
 import { 
@@ -13,9 +12,11 @@ import {
   FileText,
   File,
   Mail,
-  ChevronDown
+  ChevronDown,
+  User,
+  TicketCheck
 } from 'lucide-react';
-import { useTimeEntries, TimelineViewType } from '../context/TimeEntryContext';
+import { useTimeEntries, TimelineViewType, GroupByType } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -23,11 +24,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { toast } from 'sonner';
 
 const TimelineHeader: React.FC = () => {
-  const { selectedDate, setSelectedDate, timelineView, setTimelineView } = useTimeEntries();
+  const { selectedDate, setSelectedDate, timelineView, setTimelineView, groupBy, setGroupBy } = useTimeEntries();
   
   const goToPreviousPeriod = () => {
     if (timelineView === 'days') {
@@ -35,7 +38,6 @@ const TimelineHeader: React.FC = () => {
     } else if (timelineView === 'weeks') {
       setSelectedDate(addWeeks(selectedDate, -1));
     } else {
-      // For months view
       const newDate = new Date(selectedDate);
       newDate.setMonth(newDate.getMonth() - 1);
       setSelectedDate(newDate);
@@ -48,14 +50,12 @@ const TimelineHeader: React.FC = () => {
     } else if (timelineView === 'weeks') {
       setSelectedDate(addWeeks(selectedDate, 1));
     } else {
-      // For months view
       const newDate = new Date(selectedDate);
       newDate.setMonth(newDate.getMonth() + 1);
       setSelectedDate(newDate);
     }
   };
   
-  // Get the current period range based on selected view
   const getPeriodDisplay = () => {
     if (timelineView === 'days') {
       const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
@@ -68,7 +68,6 @@ const TimelineHeader: React.FC = () => {
       return `Week ${weekNumber}, ${yearNumber}`;
     } 
     else {
-      // For months view
       return format(selectedDate, 'MMMM yyyy');
     }
   };
@@ -80,6 +79,17 @@ const TimelineHeader: React.FC = () => {
   const handleViewChange = (view: TimelineViewType) => {
     setTimelineView(view);
     toast.success(`View changed to ${view}`);
+  };
+
+  const handleGroupByChange = (value: GroupByType) => {
+    setGroupBy(value);
+    
+    if (value === 'user') {
+      setTimelineView('months');
+      toast.success('Grouped by User - switched to Monthly view');
+    } else {
+      toast.success(`Grouped by ${value === 'none' ? 'None' : 'Issue'}`);
+    }
   };
 
   return (
@@ -112,25 +122,51 @@ const TimelineHeader: React.FC = () => {
           
           <div className="border-l h-8"></div>
           
-          <div className="flex items-center border rounded">
-            <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-8">
-              <ArrowDownWideNarrow className="h-3.5 w-3.5" />
-              <span>Group By</span>
-            </Button>
-            <div className="border-l h-8 flex items-center px-2 text-sm">
-              1. User
-            </div>
-            <div className="border-l h-8 flex items-center px-2 text-sm">
-              2. Issue
-            </div>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <div className="flex items-center border rounded cursor-pointer">
+                <Button variant="ghost" size="sm" className="text-xs flex items-center gap-1 h-8">
+                  <ArrowDownWideNarrow className="h-3.5 w-3.5" />
+                  <span>Group By</span>
+                </Button>
+                <div className="border-l h-8 flex items-center px-2 text-sm">
+                  {groupBy === 'user' ? (
+                    <>
+                      <User className="h-3.5 w-3.5 mr-1" /> User
+                    </>
+                  ) : groupBy === 'issue' ? (
+                    <>
+                      <TicketCheck className="h-3.5 w-3.5 mr-1" /> Issue
+                    </>
+                  ) : (
+                    'None'
+                  )}
+                  <ChevronDown className="ml-1 h-3.5 w-3.5" />
+                </div>
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-white">
+              <DropdownMenuRadioGroup value={groupBy} onValueChange={(value) => handleGroupByChange(value as GroupByType)}>
+                <DropdownMenuRadioItem value="none" className="text-sm cursor-pointer">
+                  None
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="user" className="text-sm cursor-pointer">
+                  <User className="mr-2 h-3.5 w-3.5" />
+                  <span>User</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="issue" className="text-sm cursor-pointer">
+                  <TicketCheck className="mr-2 h-3.5 w-3.5" />
+                  <span>Issue</span>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <MoreHorizontal className="h-4 w-4" />
           </Button>
           
           <div className="flex gap-2 ml-4">
-            {/* Days Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-8 text-xs">
@@ -153,7 +189,6 @@ const TimelineHeader: React.FC = () => {
               </DropdownMenuContent>
             </DropdownMenu>
             
-            {/* Export Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="default" className="h-8 text-xs bg-blue-600 text-white hover:bg-blue-700 flex items-center gap-1">
