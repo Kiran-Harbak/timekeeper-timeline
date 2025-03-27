@@ -3,7 +3,6 @@ import React from 'react';
 import { TimeEntryProvider } from '../context/TimeEntryContext';
 import TimelineHeader from '../components/TimelineHeader';
 import JiraTimesheet from '../components/JiraTimesheet';
-import Timeline from '../components/Timeline';
 import { Toaster } from 'sonner';
 
 const Index = () => {
@@ -30,7 +29,6 @@ const Index = () => {
           <TimelineHeader />
           
           <div className="mt-6">
-            <Timeline />
             <JiraTimesheet />
           </div>
         </div>

@@ -1,25 +1,16 @@
 
 import React, { useState } from 'react';
-import { isSameDay, format, startOfWeek, endOfWeek, startOfMonth, endOfMonth, eachDayOfInterval, eachWeekOfInterval, isWithinInterval, getDaysInMonth } from 'date-fns';
+import { isSameDay, format, startOfWeek, endOfWeek, eachDayOfInterval, isWithinInterval } from 'date-fns';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import TimeEntry from './TimeEntry';
 import { TimeEntry as TimeEntryType, getTimeBlocks, formatFullDate, formatDayName, formatDayOfMonth } from '../utils/timeUtils';
 import { Button } from '@/components/ui/button';
-import { Plus, Play, Clock, User } from 'lucide-react';
+import { Plus, Play, Clock } from 'lucide-react';
 import TimeEntryForm from './TimeEntryForm';
 import { cn } from '@/lib/utils';
-import { 
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 const Timeline: React.FC = () => {
-  const { entries, selectedDate, activeEntry, timelineView, groupBy } = useTimeEntries();
+  const { entries, selectedDate, activeEntry, timelineView } = useTimeEntries();
   const [editingEntry, setEditingEntry] = useState<TimeEntryType | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isTimerMode, setIsTimerMode] = useState(false);
@@ -36,10 +27,6 @@ const Timeline: React.FC = () => {
   const weekEnd = endOfWeek(selectedDate, { weekStartsOn: 1 });
   const weekDays = eachDayOfInterval({ start: weekStart, end: weekEnd });
   
-  // For month view (when groupBy is 'user')
-  const monthStart = startOfMonth(selectedDate);
-  const monthEnd = endOfMonth(selectedDate);
-  
   const handleOpenNewEntryForm = (timerMode: boolean = false) => {
     setEditingEntry(null);
     setIsTimerMode(timerMode);
@@ -55,84 +42,6 @@ const Timeline: React.FC = () => {
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setEditingEntry(null);
-  };
-
-  // Render group by user (month view)
-  const renderGroupByUserView = () => {
-    // Mock data for users
-    const users = [
-      { id: 'user1', name: 'John Doe', role: 'Developer', hoursLogged: 120 },
-      { id: 'user2', name: 'Jane Smith', role: 'Designer', hoursLogged: 100 },
-      { id: 'user3', name: 'Bob Johnson', role: 'Project Manager', hoursLogged: 80 }
-    ];
-    
-    const monthName = format(selectedDate, 'MMMM yyyy');
-    const daysInMonth = getDaysInMonth(selectedDate);
-    
-    return (
-      <>
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">{monthName} - User Summary</h2>
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="gap-1" 
-              onClick={() => handleOpenNewEntryForm(false)}
-            >
-              <Clock className="h-4 w-4" />
-              <span>Add Time</span>
-            </Button>
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="gap-1" 
-              onClick={() => handleOpenNewEntryForm(true)}
-            >
-              <Play className="h-4 w-4" />
-              <span>Start Timer</span>
-            </Button>
-          </div>
-        </div>
-        
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[200px]">User</TableHead>
-              <TableHead>Logged Hours</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  <div className="flex items-center">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center mr-2">
-                      <User className="h-4 w-4 text-gray-600" />
-                    </div>
-                    <div>
-                      <div>{user.name}</div>
-                      <div className="text-xs text-muted-foreground">{user.role}</div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center">
-                    <div className="w-full bg-gray-200 rounded-full h-2.5 mr-2">
-                      <div 
-                        className="bg-blue-600 h-2.5 rounded-full" 
-                        style={{ width: `${(user.hoursLogged / 160) * 100}%` }}
-                      ></div>
-                    </div>
-                    <span>{user.hoursLogged}h</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </>
-    );
   };
 
   // Render day view timeline
@@ -300,11 +209,7 @@ const Timeline: React.FC = () => {
 
   return (
     <div className="glass-panel p-4 mb-6 animate-slide-up">
-      {groupBy === 'user' 
-        ? renderGroupByUserView() 
-        : timelineView === 'days' 
-          ? renderDayView() 
-          : renderWeekView()}
+      {timelineView === 'days' ? renderDayView() : renderWeekView()}
       
       <TimeEntryForm
         entry={editingEntry}

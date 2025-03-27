@@ -3,7 +3,6 @@ import { TimeEntry, getInitialTimeEntries, generateTimeId } from '../utils/timeU
 import { toast } from 'sonner';
 
 export type TimelineViewType = 'days' | 'weeks' | 'months';
-export type GroupByType = 'none' | 'user' | 'issue';
 
 interface TimeEntryContextType {
   entries: TimeEntry[];
@@ -17,8 +16,6 @@ interface TimeEntryContextType {
   activeEntry: TimeEntry | null;
   timelineView: TimelineViewType;
   setTimelineView: (view: TimelineViewType) => void;
-  groupBy: GroupByType;
-  setGroupBy: (groupBy: GroupByType) => void;
 }
 
 const TimeEntryContext = createContext<TimeEntryContextType | undefined>(undefined);
@@ -28,13 +25,6 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [activeEntry, setActiveEntry] = useState<TimeEntry | null>(null);
   const [timelineView, setTimelineView] = useState<TimelineViewType>('days');
-  const [groupBy, setGroupBy] = useState<GroupByType>('none');
-
-  useEffect(() => {
-    if (groupBy === 'user') {
-      setTimelineView('months');
-    }
-  }, [groupBy]);
 
   const addEntry = (entry: Omit<TimeEntry, 'id'>) => {
     const newEntry = { ...entry, id: generateTimeId() };
@@ -56,6 +46,7 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const startTimer = (description: string, category: string) => {
     if (activeEntry) {
+      // Stop current timer first
       stopTimer();
     }
     
@@ -81,10 +72,12 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     toast.success('Timer stopped');
   };
 
+  // Timer updater effect - updates the UI every second while timer is running
   useEffect(() => {
     if (!activeEntry) return;
     
     const interval = setInterval(() => {
+      // Force a re-render to update the timer display
       setActiveEntry({ ...activeEntry });
     }, 1000);
     
@@ -102,9 +95,7 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     stopTimer,
     activeEntry,
     timelineView,
-    setTimelineView,
-    groupBy,
-    setGroupBy
+    setTimelineView
   };
 
   return (
