@@ -3,6 +3,8 @@ import React from 'react';
 import { TimeEntryProvider } from '../context/TimeEntryContext';
 import TimelineHeader from '../components/TimelineHeader';
 import JiraTimesheet from '../components/JiraTimesheet';
+import Timeline from '../components/Timeline';
+import Stats from '../components/Stats';
 import { Toaster } from 'sonner';
 
 const Index = () => {
@@ -27,6 +29,15 @@ const Index = () => {
           </header>
           
           <TimelineHeader />
+          
+          <div className="mt-6 grid md:grid-cols-3 gap-6">
+            <div className="md:col-span-2">
+              <Timeline />
+            </div>
+            <div>
+              <Stats />
+            </div>
+          </div>
           
           <div className="mt-6">
             <JiraTimesheet />

@@ -11,13 +11,27 @@ import {
   formatTime, 
   calculateDuration, 
   calculateTimelinePosition,
-  getCategoryColor,
   TimeEntry as TimeEntryType
 } from '../utils/timeUtils';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
+
+// Helper function to get category color
+const getCategoryColor = (category: string): string => {
+  const categoryColors: Record<string, string> = {
+    'Meeting': 'timesheet-indigo',
+    'Development': 'timesheet-blue',
+    'Design': 'timesheet-purple',
+    'Research': 'timesheet-teal',
+    'Planning': 'timesheet-green',
+    'Client Work': 'timesheet-orange',
+    'Other': 'timesheet-gray'
+  };
+  
+  return categoryColors[category] || 'timesheet-gray';
+};
 
 interface TimeEntryProps {
   entry: TimeEntryType;

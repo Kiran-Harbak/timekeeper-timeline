@@ -9,6 +9,21 @@ import { Plus, Play, Clock } from 'lucide-react';
 import TimeEntryForm from './TimeEntryForm';
 import { cn } from '@/lib/utils';
 
+// Helper function to get category color
+const getCategoryColor = (category: string): string => {
+  const categoryColors: Record<string, string> = {
+    'Meeting': 'timesheet-indigo',
+    'Development': 'timesheet-blue',
+    'Design': 'timesheet-purple',
+    'Research': 'timesheet-teal',
+    'Planning': 'timesheet-green',
+    'Client Work': 'timesheet-orange',
+    'Other': 'timesheet-gray'
+  };
+  
+  return categoryColors[category] || 'timesheet-gray';
+};
+
 const Timeline: React.FC = () => {
   const { entries, selectedDate, activeEntry, timelineView } = useTimeEntries();
   const [editingEntry, setEditingEntry] = useState<TimeEntryType | null>(null);
@@ -218,21 +233,6 @@ const Timeline: React.FC = () => {
       />
     </div>
   );
-};
-
-// Helper function to get category color
-const getCategoryColor = (category: string): string => {
-  const categoryColors: Record<string, string> = {
-    'Meeting': 'timesheet-indigo',
-    'Development': 'timesheet-blue',
-    'Design': 'timesheet-purple',
-    'Research': 'timesheet-teal',
-    'Planning': 'timesheet-green',
-    'Client Work': 'timesheet-orange',
-    'Other': 'timesheet-gray'
-  };
-  
-  return categoryColors[category] || 'timesheet-gray';
 };
 
 export default Timeline;
