@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { format, addDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, getDate } from 'date-fns';
+import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
 import { 
   ChevronLeft, 
   ChevronRight,
@@ -10,10 +10,10 @@ import {
   Download,
   Calendar,
   FileSpreadsheet,
-  FileDown, 
-  FileText, 
+  FileDown, // Replacing FileCsv with FileDown
+  FileText, // Replacing FilePdf with FileText
   Mail,
-  ChevronDown 
+  ChevronDown // Added for dropdown chevron
 } from 'lucide-react';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
@@ -28,69 +28,26 @@ import { toast } from 'sonner';
 
 const TimelineHeader: React.FC = () => {
   const { selectedDate, setSelectedDate } = useTimeEntries();
-  const [viewMode, setViewMode] = useState<'days'|'weeks'|'months'>('days');
   
   const goToPreviousPeriod = () => {
-    if (viewMode === 'days') {
-      setSelectedDate(addDays(selectedDate, -1));
-    } else if (viewMode === 'weeks') {
-      setSelectedDate(addDays(selectedDate, -7));
-    } else if (viewMode === 'months') {
-      const prevMonth = new Date(selectedDate);
-      prevMonth.setMonth(prevMonth.getMonth() - 1);
-      setSelectedDate(prevMonth);
-    }
+    setSelectedDate(addDays(selectedDate, -7));
   };
   
   const goToNextPeriod = () => {
-    if (viewMode === 'days') {
-      setSelectedDate(addDays(selectedDate, 1));
-    } else if (viewMode === 'weeks') {
-      setSelectedDate(addDays(selectedDate, 7));
-    } else if (viewMode === 'months') {
-      const nextMonth = new Date(selectedDate);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      setSelectedDate(nextMonth);
-    }
+    setSelectedDate(addDays(selectedDate, 7));
   };
   
-  // Get the period display based on view mode
-  const getPeriodDisplay = () => {
-    if (viewMode === 'days') {
-      return format(selectedDate, 'dd MMM yyyy');
-    } else if (viewMode === 'weeks') {
-      const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
-      const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
-      return `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
-    } else {
-      const start = startOfMonth(selectedDate);
-      const end = endOfMonth(selectedDate);
-      return `${format(start, 'MMM yyyy')}`;
-    }
-  };
+  // Get the current week range
+  const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+  const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
+  const periodDisplay = `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
 
   const handleExport = (type: string) => {
     toast.success(`Exporting as ${type}`);
   };
 
-  const handleViewChange = (view: 'days' | 'weeks' | 'months') => {
-    setViewMode(view);
+  const handleViewChange = (view: string) => {
     toast.success(`View changed to ${view}`);
-  };
-
-  // Generate calendar days for the month view
-  const getMonthDays = () => {
-    const start = startOfMonth(selectedDate);
-    const end = endOfMonth(selectedDate);
-    const days = [];
-    let day = start;
-    
-    while (day <= end) {
-      days.push(format(day, 'd'));
-      day = addDays(day, 1);
-    }
-    
-    return days;
   };
 
   return (
@@ -102,7 +59,7 @@ const TimelineHeader: React.FC = () => {
           </Button>
           
           <div className="flex items-center border rounded px-3 py-1.5">
-            <span className="text-sm">{getPeriodDisplay()}</span>
+            <span className="text-sm">{periodDisplay}</span>
           </div>
           
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={goToNextPeriod}>
@@ -129,7 +86,10 @@ const TimelineHeader: React.FC = () => {
               <span>Group By</span>
             </Button>
             <div className="border-l h-8 flex items-center px-2 text-sm">
-              User
+              1. User
+            </div>
+            <div className="border-l h-8 flex items-center px-2 text-sm">
+              2. Issue
             </div>
           </div>
           
@@ -142,21 +102,21 @@ const TimelineHeader: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-8 text-xs">
-                  {viewMode === 'days' ? 'Day' : viewMode === 'weeks' ? 'Week' : 'Month'} <ChevronDown className="ml-1 h-3.5 w-3.5" />
+                  Days <ChevronDown className="ml-1 h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white min-w-[150px]">
-                <DropdownMenuItem onClick={() => handleViewChange("days")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Days")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
-                  <span>Day</span>
+                  <span>Days</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("weeks")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Weeks")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
-                  <span>Week</span>
+                  <span>Weeks</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("months")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Months")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
-                  <span>Month</span>
+                  <span>Months</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -191,17 +151,6 @@ const TimelineHeader: React.FC = () => {
           </div>
         </div>
       </div>
-      
-      {/* Display days of month when in month view */}
-      {viewMode === 'months' && (
-        <div className="grid grid-cols-7 gap-1 p-2 text-center">
-          {getMonthDays().map((day, index) => (
-            <div key={index} className="text-sm border rounded p-1 hover:bg-gray-100 cursor-pointer">
-              {day}
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 };
