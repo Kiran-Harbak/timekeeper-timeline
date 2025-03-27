@@ -10,10 +10,10 @@ import {
   Download,
   Calendar,
   FileSpreadsheet,
-  FileDown, // Replacing FileCsv with FileDown
-  FileText, // Replacing FilePdf with FileText
+  FileDown, 
+  FileText, 
   Mail,
-  ChevronDown // Added for dropdown chevron
+  ChevronDown 
 } from 'lucide-react';
 import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
