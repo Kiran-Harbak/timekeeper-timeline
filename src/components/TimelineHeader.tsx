@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { format, addDays, startOfWeek, endOfWeek, addWeeks } from 'date-fns';
+import { format, addDays, startOfWeek, endOfWeek } from 'date-fns';
 import { 
   ChevronLeft, 
   ChevronRight,
@@ -10,12 +10,11 @@ import {
   Download,
   Calendar,
   FileSpreadsheet,
-  FileText,
-  File,
-  Mail,
-  ChevronDown
+  FileCsv,
+  FilePdf,
+  Mail
 } from 'lucide-react';
-import { useTimeEntries, TimelineViewType } from '../context/TimeEntryContext';
+import { useTimeEntries } from '../context/TimeEntryContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import {
@@ -27,58 +26,26 @@ import {
 import { toast } from 'sonner';
 
 const TimelineHeader: React.FC = () => {
-  const { selectedDate, setSelectedDate, timelineView, setTimelineView } = useTimeEntries();
+  const { selectedDate, setSelectedDate } = useTimeEntries();
   
   const goToPreviousPeriod = () => {
-    if (timelineView === 'days') {
-      setSelectedDate(addDays(selectedDate, -7));
-    } else if (timelineView === 'weeks') {
-      setSelectedDate(addWeeks(selectedDate, -1));
-    } else {
-      // For months view
-      const newDate = new Date(selectedDate);
-      newDate.setMonth(newDate.getMonth() - 1);
-      setSelectedDate(newDate);
-    }
+    setSelectedDate(addDays(selectedDate, -7));
   };
   
   const goToNextPeriod = () => {
-    if (timelineView === 'days') {
-      setSelectedDate(addDays(selectedDate, 7));
-    } else if (timelineView === 'weeks') {
-      setSelectedDate(addWeeks(selectedDate, 1));
-    } else {
-      // For months view
-      const newDate = new Date(selectedDate);
-      newDate.setMonth(newDate.getMonth() + 1);
-      setSelectedDate(newDate);
-    }
+    setSelectedDate(addDays(selectedDate, 7));
   };
   
-  // Get the current period range based on selected view
-  const getPeriodDisplay = () => {
-    if (timelineView === 'days') {
-      const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
-      const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
-      return `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
-    }
-    else if (timelineView === 'weeks') {
-      const weekNumber = format(selectedDate, 'w');
-      const yearNumber = format(selectedDate, 'yyyy');
-      return `Week ${weekNumber}, ${yearNumber}`;
-    } 
-    else {
-      // For months view
-      return format(selectedDate, 'MMMM yyyy');
-    }
-  };
+  // Get the current week range
+  const start = startOfWeek(selectedDate, { weekStartsOn: 1 });
+  const end = endOfWeek(selectedDate, { weekStartsOn: 1 });
+  const periodDisplay = `${format(start, 'dd/MM/yy')} - ${format(end, 'dd/MM/yy')}`;
 
   const handleExport = (type: string) => {
     toast.success(`Exporting as ${type}`);
   };
 
-  const handleViewChange = (view: TimelineViewType) => {
-    setTimelineView(view);
+  const handleViewChange = (view: string) => {
     toast.success(`View changed to ${view}`);
   };
 
@@ -91,7 +58,7 @@ const TimelineHeader: React.FC = () => {
           </Button>
           
           <div className="flex items-center border rounded px-3 py-1.5">
-            <span className="text-sm">{getPeriodDisplay()}</span>
+            <span className="text-sm">{periodDisplay}</span>
           </div>
           
           <Button variant="outline" size="icon" className="h-8 w-8" onClick={goToNextPeriod}>
@@ -134,19 +101,19 @@ const TimelineHeader: React.FC = () => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-8 text-xs">
-                  {timelineView.charAt(0).toUpperCase() + timelineView.slice(1)} <ChevronDown className="ml-1 h-3.5 w-3.5" />
+                  Days <ChevronDown className="ml-1 h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white min-w-[150px]">
-                <DropdownMenuItem onClick={() => handleViewChange("days")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Days")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Days</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("weeks")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Weeks")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Weeks</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleViewChange("months")} className="text-sm">
+                <DropdownMenuItem onClick={() => handleViewChange("Months")} className="text-sm">
                   <Calendar className="mr-2 h-3.5 w-3.5" />
                   <span>Months</span>
                 </DropdownMenuItem>
@@ -167,11 +134,11 @@ const TimelineHeader: React.FC = () => {
                   <span>Excel</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("CSV")} className="text-sm">
-                  <File className="mr-2 h-3.5 w-3.5" />
+                  <FileCsv className="mr-2 h-3.5 w-3.5" />
                   <span>CSV</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("PDF")} className="text-sm">
-                  <FileText className="mr-2 h-3.5 w-3.5" />
+                  <FilePdf className="mr-2 h-3.5 w-3.5" />
                   <span>PDF</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => handleExport("Email")} className="text-sm">

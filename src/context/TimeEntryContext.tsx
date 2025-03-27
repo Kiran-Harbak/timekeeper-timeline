@@ -1,8 +1,7 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { TimeEntry, getInitialTimeEntries, generateTimeId } from '../utils/timeUtils';
 import { toast } from 'sonner';
-
-export type TimelineViewType = 'days' | 'weeks' | 'months';
 
 interface TimeEntryContextType {
   entries: TimeEntry[];
@@ -14,8 +13,6 @@ interface TimeEntryContextType {
   startTimer: (description: string, category: string) => void;
   stopTimer: () => void;
   activeEntry: TimeEntry | null;
-  timelineView: TimelineViewType;
-  setTimelineView: (view: TimelineViewType) => void;
 }
 
 const TimeEntryContext = createContext<TimeEntryContextType | undefined>(undefined);
@@ -24,7 +21,6 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [entries, setEntries] = useState<TimeEntry[]>(getInitialTimeEntries());
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [activeEntry, setActiveEntry] = useState<TimeEntry | null>(null);
-  const [timelineView, setTimelineView] = useState<TimelineViewType>('days');
 
   const addEntry = (entry: Omit<TimeEntry, 'id'>) => {
     const newEntry = { ...entry, id: generateTimeId() };
@@ -93,9 +89,7 @@ export const TimeEntryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     deleteEntry,
     startTimer,
     stopTimer,
-    activeEntry,
-    timelineView,
-    setTimelineView
+    activeEntry
   };
 
   return (
