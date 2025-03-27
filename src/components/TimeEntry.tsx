@@ -11,7 +11,6 @@ import {
   formatTime, 
   calculateDuration, 
   calculateTimelinePosition,
-  getCategoryColor,
   TimeEntry as TimeEntryType
 } from '../utils/timeUtils';
 import { useTimeEntries } from '../context/TimeEntryContext';
@@ -120,6 +119,21 @@ const TimeEntry: React.FC<TimeEntryProps> = ({ entry, onEdit }) => {
       </TooltipContent>
     </Tooltip>
   );
+};
+
+// Helper function to get category color
+const getCategoryColor = (category: string): string => {
+  const categoryColors: Record<string, string> = {
+    'Meeting': 'timesheet-indigo',
+    'Development': 'timesheet-blue',
+    'Design': 'timesheet-purple',
+    'Research': 'timesheet-teal',
+    'Planning': 'timesheet-green',
+    'Client Work': 'timesheet-orange',
+    'Other': 'timesheet-gray'
+  };
+  
+  return categoryColors[category] || 'timesheet-gray';
 };
 
 export default TimeEntry;

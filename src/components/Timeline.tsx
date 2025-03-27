@@ -44,6 +44,21 @@ const Timeline: React.FC = () => {
     setEditingEntry(null);
   };
 
+  // Helper function for category color
+  const getCategoryColor = (category: string): string => {
+    const categoryColors: Record<string, string> = {
+      'Meeting': 'timesheet-indigo',
+      'Development': 'timesheet-blue',
+      'Design': 'timesheet-purple',
+      'Research': 'timesheet-teal',
+      'Planning': 'timesheet-green',
+      'Client Work': 'timesheet-orange',
+      'Other': 'timesheet-gray'
+    };
+    
+    return categoryColors[category] || 'timesheet-gray';
+  };
+
   // Render day view timeline
   const renderDayView = () => {
     return (
@@ -218,21 +233,6 @@ const Timeline: React.FC = () => {
       />
     </div>
   );
-};
-
-// Helper function to get category color
-const getCategoryColor = (category: string): string => {
-  const categoryColors: Record<string, string> = {
-    'Meeting': 'timesheet-indigo',
-    'Development': 'timesheet-blue',
-    'Design': 'timesheet-purple',
-    'Research': 'timesheet-teal',
-    'Planning': 'timesheet-green',
-    'Client Work': 'timesheet-orange',
-    'Other': 'timesheet-gray'
-  };
-  
-  return categoryColors[category] || 'timesheet-gray';
 };
 
 export default Timeline;
